@@ -20,16 +20,22 @@ export async function predictNationality(name: string): Promise<NationalityPredi
     const result: NationalityPrediction = await makeCall(name, `https://api.nationalize.io`);
     const countryCodes = result.country.map(c => c.country_id);
     const countries = await lookUpCountryCodes(countryCodes);
+    console.log('country info', countries)
     const updatedCountries = result.country.map(c => {
-        return { ...c, countryName: countries.find((cc: { cca2: string }) => cc.cca2 == c.country_id).name.common }
+        return { ...c, countryName: countries.find((cc: { cca2: string }) => cc.cca2 == c.country_id)?.name.common }
     });
     return { ...result, country: updatedCountries };
 
 }
 
 export async function lookUpCountryCodes(codes: string[]) {
-    const res = await fetch(`https://restcountries.com/v3.1/alpha?codes=${codes.join(",")}`)
-    return await res.json();
+    try {
+        const res = await fetch(`https://restcountries.com/v3.1/alpha?codes=${codes.join(",")}`)
+        return await res.json();
+    } catch (e) {
+        console.log("Failed to get country codes", e)
+    }
+    return [];
 }
 
 async function makeCall(name: string, url: string) {

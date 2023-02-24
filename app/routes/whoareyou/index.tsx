@@ -17,7 +17,7 @@ export default function Result() {
         <div>Nationality
             <ul className="list-disc list-inside">
                 {result.nationality.country.map(country =>
-                    (<li key={country.country_id}>{country.countryName} (Probability: {country.probability * 100}%)</li>))}
+                    (<li key={country.country_id}>{country.countryName || country.country_id} (Probability: {country.probability * 100}%)</li>))}
             </ul>
         </div>
     </div> : <div></div>

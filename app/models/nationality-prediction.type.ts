@@ -3,6 +3,6 @@ export interface NationalityPrediction {
     country: {
         country_id: string;
         probability: number;
-        countryName: string;
+        countryName?: string;
     }[];
 }
