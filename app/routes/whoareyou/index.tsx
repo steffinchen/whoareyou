@@ -1,24 +1,24 @@
 import { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import invariant from "tiny-invariant";
-import { doSearch } from "~/models/whoareyou.server";
+import { predictAll } from "~/models/whoareyou.server";
 
 export async function loader({ request }: LoaderArgs) {
     const url = new URL(request.url);
     const name = url.searchParams.get("name");
-    invariant(name, "name not found");
-    return doSearch(name);
+    return name ? predictAll(name) : null;
 }
 
 export default function Result() {
     const result = useLoaderData<typeof loader>();
-    return <div>
-        <h2>Your result</h2>
-        <ul>
-            <li>Gender: {result.gender}</li>
-            <li>Name: {result.name}</li>
-            <li>Probability: {result.probability}</li>
-            <li>Count: {result.count}</li>
-        </ul>
-    </div>
+    return result ? <div className="p-4">
+        <h2 className="text-xl">Result for {result.age.name}</h2>
+        <div>Age: {result.age.age}</div>
+        <div>Gender: {result.gender.gender} (Probability: {result.gender.probability * 100}%)</div>
+        <div>Nationality
+            <ul className="list-disc list-inside">
+                {result.nationality.country.map(country =>
+                    (<li key={country.country_id}>{country.countryName} (Probability: {country.probability * 100}%)</li>))}
+            </ul>
+        </div>
+    </div> : <div></div>
 }
