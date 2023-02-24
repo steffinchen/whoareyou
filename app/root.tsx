@@ -7,7 +7,9 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useCatch,
 } from "@remix-run/react";
+import Header from "./components/header";
 
 import { getUser } from "./session.server";
 import tailwindStylesheetUrl from "./styles/tailwind.css";
@@ -36,8 +38,58 @@ export default function App() {
         <Links />
       </head>
       <body className="h-full">
-        <Outlet />
+        <div className="flex h-full min-h-screen flex-col">
+          <Header></Header>
+          <Outlet></Outlet>
+        </div>
         <ScrollRestoration />
+        <Scripts />
+        <LiveReload />
+      </body>
+    </html>
+  );
+}
+
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+  return (
+    <html>
+      <head>
+        <title>Oh no!</title>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <div className="flex h-full min-h-screen flex-col">
+          <Header></Header>
+          <p>Something went wrong</p>
+        </div>
+        <Scripts />
+        <LiveReload />
+      </body>
+    </html>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+  return (
+    <html>
+      <head>
+        <title>Oops!</title>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <div className="flex h-full min-h-screen flex-col">
+          <Header></Header>
+          <h1>Oops</h1>
+          {caught.status === 404 ?
+            (<p>
+              This page doesn't exist</p>
+            ) : <p>Oops, something went wrong. ( {caught.status} {caught.statusText})</p>}
+        </div>
         <Scripts />
         <LiveReload />
       </body>
