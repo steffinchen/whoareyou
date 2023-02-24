@@ -17,6 +17,7 @@ release_command = "npx prisma migrate deploy"
 [experimental]
 allowed_public_ports = [ ]
 auto_rollback = true
+private_network = true
 
 [[services]]
 internal_port = 8_080
